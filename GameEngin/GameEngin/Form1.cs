@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -34,9 +35,13 @@ namespace GameEngin
             lines.Add(new Line(new PointF(0, 100), new PointF(50, 100)));
             lines.Add(new Line(new PointF(50, 100), new PointF(100, 100)));
             lines.Add(new Line(new PointF(100, 100), new PointF(150, 150)));
-            lines.Add(new Line(new PointF(150, 150), new PointF(500, 150)));
+            lines.Add(new Line(new PointF(150, 150), new PointF(300, 150)));
+            lines.Add(new Line(new PointF(300, 150), new PointF(350, 100)));
+            lines.Add(new Line(new PointF(350, 100), new PointF(400, 100)));
+            lines.Add(new Line(new PointF(400, 100), new PointF(450, 150)));
+            lines.Add(new Line(new PointF(450, 150), new PointF(600, 150)));
 
-            characterLoction = lines[0].start;
+            characterLoction = new PointF(lines[0].start.X,lines[0].start.Y);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -57,34 +62,21 @@ namespace GameEngin
 
             Line attached = over[0];
 
-            double slope = Line.calculateAnglw(attached.start, attached.end);
+            
 
-            e.Graphics.FillEllipse(Brushes.Blue,new RectangleF(characterLoction,new SizeF(3,3)));
-
-            GraphicsPath path = new GraphicsPath();
-            path.AddLine(new PointF(characterLoction.X, characterLoction.Y - length), characterLoction);
-
-            Matrix mat = new Matrix();
-
-            mat.RotateAt((float)slope, characterLoction, MatrixOrder.Prepend);
-
-            path.Transform(mat);
-
-            PointF ray = Line.GetRayAcrossPoints(path.PathPoints[0], path.PathPoints[path.PointCount - 1],1000);
-
-            PointF intersection = Line.FindIntersectionFast(new PointF(characterLoction.X,characterLoction.Y - length), ray, attached.start, attached.end);
-
-            PointF lstart = Line.GetLineEndOfDist(intersection, (float)Line.CalculateSlope(path.PathPoints[0], path.PathPoints[path.PointCount - 1]), length);
-
-            if (intersection.IsEmpty)
+            if (attached.slope() == 0)
             {
-                e.Graphics.DrawLine(Pens.Red, new PointF(characterLoction.X, attached.start.Y), new PointF(characterLoction.X, attached.start.Y - length));
+                e.Graphics.DrawLine(Pens.Red, characterLoction.X, attached.start.Y - length, characterLoction.X, attached.start.Y);
             }
             else
             {
-                e.Graphics.DrawLine(Pens.Red, lstart, intersection);
+                PointF characterEnd = Line.GetLineEndOfDist(characterLoction, (float)attached.calcultePerpendicularLineSlope(), length);
+                
+                PointF intersection = Line.FindIntersectionFast(characterEnd, characterLoction, attached.start, attached.end);
+                PointF lineStart = Line.GetLineEndOfDist(intersection, (float)attached.calcultePerpendicularLineSlope(), length);
+                e.Graphics.DrawLine(Pens.Red, lineStart, intersection);
+                characterLoction = intersection;
             }
-            path.Dispose();
 
             base.OnPaint(e);
         }
@@ -96,6 +88,26 @@ namespace GameEngin
 
             this.Invalidate();
             base.OnKeyUp(e);
+        }
+
+        protected override void OnMouseDoubleClick(MouseEventArgs e)
+        {
+            int add = 2;
+            new Task(() => {
+                while (true)
+                {
+                    characterLoction.X += add;
+                    Thread.Sleep(30);
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        this.Invalidate();
+                    }));
+
+                    if (characterLoction.X < 0 || characterLoction.X > lines[lines.Count - 1].end.X)
+                        add *= -1;
+                }
+            }).Start();
+            base.OnMouseDoubleClick(e);
         }
     }
 }

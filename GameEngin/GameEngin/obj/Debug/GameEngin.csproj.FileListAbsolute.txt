@@ -7,3 +7,12 @@ C:\Users\Yazan\Documents\Visual Studio 2012\Projects\GameEngin\GameEngin\obj\Deb
 C:\Users\Yazan\Documents\Visual Studio 2012\Projects\GameEngin\GameEngin\obj\Debug\GameEngin.csproj.GenerateResource.Cache
 C:\Users\Yazan\Documents\Visual Studio 2012\Projects\GameEngin\GameEngin\obj\Debug\GameEngin.exe
 C:\Users\Yazan\Documents\Visual Studio 2012\Projects\GameEngin\GameEngin\obj\Debug\GameEngin.pdb
+E:\GitHub\YazanGameEngine\GameEngin\GameEngin\bin\Debug\GameEngin.exe.config
+E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.exe
+E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.pdb
+E:\GitHub\YazanGameEngine\GameEngin\GameEngin\bin\Debug\GameEngin.exe
+E:\GitHub\YazanGameEngine\GameEngin\GameEngin\bin\Debug\GameEngin.pdb
+E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.csprojResolveAssemblyReference.cache
+E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.Form1.resources
+E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.Properties.Resources.resources
+E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.csproj.GenerateResource.Cache
