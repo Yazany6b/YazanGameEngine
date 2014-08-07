@@ -98,10 +98,18 @@ namespace GameEngin
                 {
                     characterLoction.X += add;
                     Thread.Sleep(30);
-                    this.Invoke(new MethodInvoker(() =>
+                    try
                     {
-                        this.Invalidate();
-                    }));
+                        this.Invoke(new MethodInvoker(() =>
+                        {
+                            this.Invalidate();
+                        }));
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+
 
                     if (characterLoction.X < 0 || characterLoction.X > lines[lines.Count - 1].end.X)
                         add *= -1;

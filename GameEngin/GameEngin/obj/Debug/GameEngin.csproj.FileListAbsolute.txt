@@ -16,3 +16,12 @@ E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.csprojResolveA
 E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.Form1.resources
 E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.Properties.Resources.resources
 E:\GitHub\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.csproj.GenerateResource.Cache
+G:\Software Engineer Toolbox\Github\YazanGameEngine\GameEngin\GameEngin\bin\Debug\GameEngin.exe.config
+G:\Software Engineer Toolbox\Github\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.exe
+G:\Software Engineer Toolbox\Github\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.pdb
+G:\Software Engineer Toolbox\Github\YazanGameEngine\GameEngin\GameEngin\bin\Debug\GameEngin.exe
+G:\Software Engineer Toolbox\Github\YazanGameEngine\GameEngin\GameEngin\bin\Debug\GameEngin.pdb
+G:\Software Engineer Toolbox\Github\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.csprojResolveAssemblyReference.cache
+G:\Software Engineer Toolbox\Github\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.Form1.resources
+G:\Software Engineer Toolbox\Github\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.Properties.Resources.resources
+G:\Software Engineer Toolbox\Github\YazanGameEngine\GameEngin\GameEngin\obj\Debug\GameEngin.csproj.GenerateResource.Cache
