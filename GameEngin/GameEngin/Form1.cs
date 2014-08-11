@@ -111,10 +111,17 @@ namespace GameEngin
             manager.firstHandler = new PointF(400, 300);
             manager.secondHandler = new PointF(500, 400);
 
+            manager.lineStart = new PointF(350, 250);
+            manager.lineEnd = new PointF(700, 260);
+
             startPanel.Location = Point.Round(manager.startPoint);
             endPanel.Location = Point.Round(manager.endPoint);
             handler1Panel.Location = Point.Round(manager.firstHandler);
             handler2Panel.Location = Point.Round(manager.secondHandler);
+            lineStartPanel.Location = Point.Round(manager.lineStart);
+            lineEndPanel.Location = Point.Round(manager.lineEnd);
+
+            manager.CalaculateBezier();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -246,7 +253,9 @@ namespace GameEngin
                     ((Panel)sender).Location = new Point(((Panel)sender).Location.X + (e.X - activePoint.X), ((Panel)sender).Location.Y + (e.Y - activePoint.Y));
 
                     manager.setLocation(((Panel)sender).Location, ((Panel)sender).TabIndex);
+                    manager.CalaculateBezier();
                     this.Invalidate();
+
                 }
             }
         }
@@ -259,6 +268,43 @@ namespace GameEngin
         private void handler2Panel_MouseUp(object sender, MouseEventArgs e)
         {
             activePoint = Point.Empty;
+        }
+
+        Point formDown = Point.Empty;
+        private void Form1_MouseUp(object sender, MouseEventArgs e)
+        {
+            formDown = Point.Empty;
+            this.Cursor = Cursors.Default;
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+
+
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                if (formDown.IsEmpty)
+                {
+                    formDown = e.Location;
+                    this.Cursor = Cursors.Hand;
+                }
+                else
+                {
+                    int diffx = e.X - formDown.X;
+                    int diffy = e.Y - formDown.Y;
+                    formDown = e.Location;
+
+                    foreach (Control control in Controls)
+                    {
+                        control.Location = new Point(control.Location.X + diffx, control.Location.Y + diffy);
+                        manager.setLocation(control.Location, control.TabIndex);
+                        manager.CalaculateBezier();
+                        this.Invalidate();
+                    }
+
+                    this.Invalidate();
+                }
+            }
         }
     }
 }

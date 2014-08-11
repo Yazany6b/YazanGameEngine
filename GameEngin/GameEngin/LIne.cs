@@ -64,13 +64,6 @@ namespace GameEngin
             return p.X >= start.X && p.X <= end.X;
         }
 
-        public static double CalculateSlope(PointF start,PointF end)
-        {
-            if (end.X - start.X == 0)
-                return 0;
-            return (end.Y - start.Y) / (end.X - start.X);
-        }
-
         public static PointF GetRayAcrossPoints(PointF a, PointF b, int distance)
         {
 
@@ -113,8 +106,42 @@ namespace GameEngin
             return p.Y - slope * p.X;
         }
 
-        public static PointF FindIntersectionFast(PointF p1, PointF p2, PointF p3, PointF p4)
+        public static double CalculateSlope(PointF start, PointF end)
         {
+            if (end.X - start.X == 0)
+                return 0;
+            return (end.Y - start.Y) / (end.X - start.X);
+        }
+
+        public static PointF FindIntersectionFast(PointF line1Start, PointF line1End, PointF line2Start, PointF line2End)
+        {
+
+            float slope1 = (line1End.Y - line1Start.Y) / (line1End.X - line1Start.X);
+            float slope2 = (line2End.Y - line2Start.Y) / (line2End.X - line2Start.X);
+
+            float yinter1 = GetLineYIntesept(line1Start, slope1);
+            float yinter2 = GetLineYIntesept(line2Start, slope2);
+
+            if (slope1 == slope2 && yinter1 != yinter2)
+                return PointF.Empty;
+
+            float x = (yinter2 - yinter1) / (slope1 - slope2);
+
+            float y = slope1 * x + yinter1;
+
+            return new PointF(x, y);
+        }
+
+        public static bool IsPointOnLine(PointF lineStart, PointF lineEnd, PointF point)
+        {
+            double slope = CalculateSlope(lineStart, lineEnd);
+            float yIntersept = GetLineYIntesept(lineStart, (float)slope);
+
+            return lineStart.Y == slope * lineStart.X + yIntersept;
+        }
+
+        public static PointF FindActuallIntersection(PointF p1, PointF p2, PointF p3, PointF p4)
+         {
 
             float slope1 = (p2.Y - p1.Y) / (p2.X - p1.X);
             float slope2 = (p4.Y - p3.Y) / (p4.X - p3.X);
@@ -129,7 +156,60 @@ namespace GameEngin
 
             float y = slope1 * x + yinter1;
 
-            return new PointF(x, y);
+            PointF intersection = new PointF(x, y);
+
+            return IsPointOnLine(p1, p2, intersection) ? intersection : PointF.Empty;
+        }
+
+        // Returns 1 if the lines intersect, otherwise 0. In addition, if the lines 
+        // intersect the intersection point may be stored in the floats i_x and i_y.
+        public static PointF FindSuperLineIntersection(PointF p1, PointF p2, PointF p3, PointF p4)
+        {
+            float i_x = 0;
+            float i_y = 0;
+
+            float s1_x, s1_y, s2_x, s2_y;
+            s1_x = p2.X - p1.X;
+            s1_y = p2.Y - p1.Y;
+            s2_x = p4.X - p3.X;
+            s2_y = p4.Y - p3.Y;
+
+            float s, t;
+            s = (-s1_y * (p1.X - p3.X) + s1_x * (p1.Y - p3.Y)) / (-s2_x * s1_y + s1_x * s2_y);
+            t = (s2_x * (p1.Y - p3.Y) - s2_y * (p1.X - p3.X)) / (-s2_x * s1_y + s1_x * s2_y);
+
+            if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+            {
+                i_x = p1.X + (t * s1_x);
+                i_y = p1.Y + (t * s1_y);
+                return new PointF(i_x, i_y);
+            }
+
+            return PointF.Empty; // No collision
+        }
+
+        public static PointF FindExtraIntersection(PointF p1, PointF p2, PointF p3, PointF p4)
+        {
+            float A1 = p2.Y - p1.Y;
+            float B1 = p1.X - p2.X;
+            float C1 = A1 * p1.X + B1 * p1.Y;
+
+            float A2 = p4.Y - p3.Y;
+            float B2 = p3.X - p4.X;
+            float C2 = A2 * p3.X + B2 * p3.Y;
+
+            float det = A1 * B2 - A2 * B1;
+            if (det == 0)
+            {
+                return PointF.Empty;
+            }
+            else
+            {
+                float x = (B2 * C1 - B1 * C2) / det;
+                float y = (A1 * C2 - A2 * C1) / det;
+
+                return new PointF(x, y);
+            }
         }
     }
 }

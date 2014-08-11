@@ -38,5 +38,8 @@ namespace GameEngin
         {
             g.DrawPath(p, path);
         }
+
+        /*computes intersection between a cubic spline and a line segment*/
+
     }
 }
