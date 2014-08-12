@@ -92,7 +92,7 @@ namespace GameEngin
         {
             PointF[] pfs = manager.area.points;
             List<PointF> collided = new List<PointF>();
-            rect = new RectangleF(300, 0, 50, 50);
+            
             float times = 0;
             new Task(() =>
             {
@@ -137,7 +137,7 @@ namespace GameEngin
 
 			        }
 
-                    PointF characterEnd = Line.GetLineEndOfDist(characterLoction, (float)(new Line().calcultePerpendicularLineSlope(), length);
+                    //PointF characterEnd = Line.GetLineEndOfDist(characterLoction, (float)(new Line().calcultePerpendicularLineSlope(), length));
 
                     Thread.Sleep(50);
 
@@ -148,6 +148,8 @@ namespace GameEngin
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
+            rect = new RectangleF(e.X, 0, 50, 50);
+            FallenRectAnimation();
             base.OnMouseDoubleClick(e);
         }
 
