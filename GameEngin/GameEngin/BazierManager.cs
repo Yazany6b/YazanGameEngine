@@ -16,11 +16,12 @@ namespace GameEngin
         public PointF firstHandler;
         public PointF secondHandler;
 
-
         public PointF lineStart;
         public PointF lineEnd;
 
-        private TerrienArea area;
+        public bool DrawAreaPoints = false;
+        public TerrienArea area;
+
 
         public BazierManager()
         {
@@ -30,7 +31,7 @@ namespace GameEngin
         public void Draw(Graphics g,Pen p)
         {
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            g.DrawBezier(p, startPoint, firstHandler, secondHandler, endPoint);
+            //g.DrawBezier(p, startPoint, firstHandler, secondHandler, endPoint);
             //g.DrawLine(Pens.Red, firstHandler, secondHandler);
             g.DrawLine(Pens.Yellow, firstHandler, startPoint);
             g.DrawLine(Pens.Yellow, secondHandler, endPoint);
@@ -39,7 +40,8 @@ namespace GameEngin
 
             if (area != null)
             {
-                area.Draw(g, Brushes.Red, new SizeF(4,4));
+                if (DrawAreaPoints) area.Draw(g, Brushes.Orange, new SizeF(4, 4));
+
                 PointF [] intesections = area.Intersection(lineStart, lineEnd);
                 foreach (var intersection in intesections)
                 {

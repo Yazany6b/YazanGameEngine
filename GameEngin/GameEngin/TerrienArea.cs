@@ -18,7 +18,7 @@ namespace GameEngin
         public PointF ControlPoint2 { get; set; }
         public PointF EndPoint { get; set; }
 
-        private PointF[] points;
+        public PointF[] points;
 
         public TerrienArea(PointF start, PointF control1, PointF control2, PointF end)
         {
@@ -90,10 +90,16 @@ namespace GameEngin
 
         public void Draw(Graphics g, Brush brush,SizeF size)
         {
-           /* foreach (var item in points)
+
+            for (int i = 1; i < points.Length - 1; i++)
             {
-                g.FillEllipse(brush, new RectangleF(new PointF(item.X - size.Width / 2, item.Y - size.Height / 2), size));
-            }*/
+                g.DrawCurve(Pens.Pink, new PointF[] { points[i - 1], points[i], points[i + 1] });
+            }
+
+            foreach (var item in points)
+            {
+                //g.FillEllipse(brush, new RectangleF(new PointF(item.X - size.Width / 2, item.Y - size.Height / 2), size));
+            }
         }
 
     }

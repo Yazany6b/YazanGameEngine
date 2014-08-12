@@ -18,7 +18,13 @@ namespace GameEngin
 
         PointF characterLoction;
 
+        BazierManager manager = new BazierManager();
+        Point activePoint = Point.Empty;
+
         float length = 10;
+
+        RectangleF rect = RectangleF.Empty;
+
         public Form1()
         {
             InitializeComponent();
@@ -46,63 +52,6 @@ namespace GameEngin
             characterLoction = new PointF(lines[0].start.X,lines[0].start.Y);
         }
 
-                /*---------------------------------------------------------------------------
-        Returns Array of intersection Points on a quadratic curve.
-        An empty Array is returned if no intersection is found.
- 
-        Parameters:
-        A		-Start Point of a segment to make intersection.
-        B		-End Point of a segment to make intersection.
-        sp		-Start Point of curve.
-        cp		-Control Point of curve.
-        ep		-End Point of curve.
-        rez		-The resolution of curve tests
-        Note: Uses another function for testing the intersections:
- 
-        http://keith-hair.net/blog/2008/08/04/find-intersection-point-of-two-lines-in-as3/
- 
-        ----------------------------------------------------------------------------*/
-        List<PointF> lineToQCurve_Intersect(PointF A,PointF B,PointF sp,PointF cp,PointF ep,int rez =80)
-        {
-	        //rez less than 2 is almost "Pointless" LOL.
-	        var low =2;
-	        var high =99; //100 causes infinite loop.
-	        rez=Math.Min(Math.Max(Math.Min(low,high),rez),high);
-	        var t =0;
-	        var ft =0;
-	        var n =99/rez;
-	        var C=new PointF();
-	        var D=new PointF();
-	        var L=new PointF();
-	        PointF ip;
-	        List<PointF> a = new List<PointF>();
-	        //test possible segment intersections in a loop.
-	        var z=100;
-	        while (z > -1)
-	        {
-		        t=z/100;
-		        C.X=(float)(Math.Pow(1-t,2)*sp.X+2*(1-t)*t*cp.X+Math.Pow(t,2)*ep.X);
-		        C.Y=(float)(Math.Pow(1-t,2)*sp.Y+2*(1-t)*t*cp.Y+Math.Pow(t,2)*ep.Y);
-		        D=L;//Connect start to last end point
-                L = new PointF(C.X,C.Y);
-		        if (z == 100) {
-			        D= new PointF(ep.X,ep.Y);
-		        }
-
-		        ip=Line.FindIntersectionFast(A,B,C,D);
-		        
-                if (ip != null) {
-			        a.Add(ip);
-			        if(a.Count == 2){
-				        break;
-			        }
-		        }
-		        z-=n;
-	        }
-
-	        return a;
-        }
-
         public void BazierHandler()
         {
             manager.startPoint = new PointF(300, 500);
@@ -126,120 +75,82 @@ namespace GameEngin
 
         protected override void OnPaint(PaintEventArgs e)
         {
-
+            if (!rect.IsEmpty)
+            {
+                e.Graphics.FillRectangle(Brushes.Blue, rect);
+            }
             manager.Draw(e.Graphics, new Pen(Color.Green,2));
-
-            if (true) return;
-            e.Graphics.DrawBezier(Pens.Green, new Point(400, 400), new Point(450, 350), new Point(500, 340), new Point(600, 450));
-
-            PointF [] curve = new PointF[] { new PointF(100, 200), new PointF(300, 100), new PointF(500, 200) };
-            PointF [] line = new PointF[]{new PointF(200, 50), new PointF(350, 300)};
-
-            e.Graphics.DrawCurve(Pens.Green, curve);
-            e.Graphics.DrawLines(Pens.Blue, line);
-
-            GraphicsPath ph = new GraphicsPath();
-
-            ph.AddCurve(curve);
-
-            foreach (var item in curve)
-            {
-                e.Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150,180,30,40)), new RectangleF(item.X - 3,item.Y - 3,6,6));
-            }
-
-            foreach (var item in line)
-            {
-                e.Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 180, 30, 40)), new RectangleF(item.X - 3, item.Y - 3, 6, 6));
-            }
-
-            List<PointF> p = lineToQCurve_Intersect(line[0], line[1], curve[0], curve[1], curve[2], 20);
-
-
-            foreach (var item in p)
-            {
-                e.Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 40, 30, 180)), new RectangleF(item.X - 3, item.Y - 3, 6, 6));
-            }
-
-            foreach (var item in ph.PathPoints)
-            {
-                e.Graphics.FillEllipse(new SolidBrush(Color.FromArgb(150, 40, 180, 30)), new RectangleF(item.X - 3, item.Y - 3, 6, 6));
-            }
-
-            if (true) return;
-            List<Line> over = new List<Line>();
-            foreach (var item in lines)
-            {
-                item.draw(e.Graphics, Pens.Black);
-
-                if (item.isOver(characterLoction))
-                {
-                    over.Insert(0, item);
-                }
-            }
-
-            if (over.Count == 0)
-                return;
-
-            Line attached = over[0];
-
-            
-
-            if (attached.slope() == 0)
-            {
-                e.Graphics.DrawLine(Pens.Red, characterLoction.X, attached.start.Y - length, characterLoction.X, attached.start.Y);
-            }
-            else
-            {
-                PointF characterEnd = Line.GetLineEndOfDist(characterLoction, (float)attached.calcultePerpendicularLineSlope(), length);
-                
-                PointF intersection = Line.FindIntersectionFast(characterEnd, characterLoction, attached.start, attached.end);
-                PointF lineStart = Line.GetLineEndOfDist(intersection, (float)attached.calcultePerpendicularLineSlope(), length);
-                e.Graphics.DrawLine(Pens.Red, lineStart, intersection);
-                characterLoction = intersection;
-            }
-
-            base.OnPaint(e);
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Right) characterLoction.X += 10;
-            if (e.KeyCode == Keys.Left) characterLoction.X -= 10;
 
-            this.Invalidate();
             base.OnKeyUp(e);
+        }
+
+        private void FallenRectAnimation()
+        {
+            PointF[] pfs = manager.area.points;
+            List<PointF> collided = new List<PointF>();
+            rect = new RectangleF(300, 0, 50, 50);
+            float times = 0;
+            new Task(() =>
+            {
+                while (true)
+                {
+                    rect.Y += 5;
+
+                    PointF chk = manager.startPoint.Y < manager.endPoint.Y ? manager.startPoint : manager.endPoint;
+
+                    if (rect.Y > chk.Y)
+                    {
+                        for (int i = 0; i < pfs.Length; i++)
+                        {
+                            if (pfs[i].X >= rect.X && pfs[i].X < rect.X + rect.Width && Math.Abs(pfs[i].Y - (rect.Y + rect.Height)) < 10)
+                            {
+                                times += Math.Abs(pfs[i].Y - (rect.Y + rect.Height));
+                                pfs[i].Y = rect.Y + rect.Height + 1;
+
+                            }
+                        }
+                    }
+
+                    Thread.Sleep(50);
+
+                    Invalidate();
+
+                    if (times > 100)
+                        break;
+                }
+            }).Start();
+        }
+
+        public void HeartBeatsAnimation()
+        {
+            PointF[] pfs = manager.area.points;
+            new Task(() =>
+            {
+                while (true)
+                {
+                    for (int i = 0; i < pfs.Length; i+= 9)
+			        {
+
+			        }
+
+                    PointF characterEnd = Line.GetLineEndOfDist(characterLoction, (float)(new Line().calcultePerpendicularLineSlope(), length);
+
+                    Thread.Sleep(50);
+
+                    Invalidate();
+                }
+            }).Start();
         }
 
         protected override void OnMouseDoubleClick(MouseEventArgs e)
         {
-            int add = 2;
-            new Task(() => {
-                while (true)
-                {
-                    characterLoction.X += add;
-                    Thread.Sleep(30);
-                    try
-                    {
-                        this.Invoke(new MethodInvoker(() =>
-                        {
-                            this.Invalidate();
-                        }));
-                    }
-                    catch (Exception)
-                    {
-                        break;
-                    }
-
-
-                    if (characterLoction.X < 0 || characterLoction.X > lines[lines.Count - 1].end.X)
-                        add *= -1;
-                }
-            }).Start();
             base.OnMouseDoubleClick(e);
         }
 
-        BazierManager manager = new BazierManager();
-        Point activePoint = Point.Empty;
         private void startPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
@@ -280,7 +191,6 @@ namespace GameEngin
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
 
-
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
                 if (formDown.IsEmpty)
@@ -304,6 +214,20 @@ namespace GameEngin
 
                     this.Invalidate();
                 }
+            }
+        }
+
+        private void Form1_MouseEnter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Middle)
+            {
+                manager.DrawAreaPoints = !manager.DrawAreaPoints;
+                this.Invalidate();
             }
         }
     }
